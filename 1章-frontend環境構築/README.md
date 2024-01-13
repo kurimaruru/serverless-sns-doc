@@ -16,8 +16,6 @@ $ npm --version
 
 https://nodejs.org/en
 
-![node.js](/1章-frontend環境構築/test.png)
-
 バージョンは異なりますが、progate の環境構築説明が易しく説明してくれています。
 
 - windows
