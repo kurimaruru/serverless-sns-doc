@@ -659,7 +659,7 @@ import { useFetchTweetsData } from "./home.hooks"; // 追加
 const Home = async () => {
   // =========追加：ここから============
   // TODO: useFetchTweetsDataの引数はログイン機能実行あとにuserのメアドを引数に渡せるように更新する
-  const { fetchTweetsData } = useFetchTweetsData(["testUserId"]);
+  const { fetchTweetsData } = useFetchTweetsData(["test@mail.com"]);
   const tweetsData = await fetchTweetsData();
   // 一旦console.logでコマンドプロンプトやbashなどの`npm run dev`を実行しているところでレスポンスデータを確認してみましょう
   console.log(tweetsData);
