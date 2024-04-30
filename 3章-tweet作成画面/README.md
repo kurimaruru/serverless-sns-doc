@@ -685,5 +685,110 @@ export default _CreateTweet;
 
 開発者ツールの Network で`upload_url`と`create_tweet`の status が 200 になっていて、`/home`のツイート一覧画面に遷移できていたら OK です。
 
+## アップロードした画像を表示できるようにする。
+上記でtweet作成時に画像のアップロード用URLを取得してアップロードするところまで実装しました。このアップロードした画像をHOME画面で表示できるようにするための実装を追加して、3章は終わりにしたいと思います。
+
+まずは、apiフォルダの配下に以下を追加します。
+
+`frontend/src/app/api/download_url/route.ts`
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+
+export function POST(request: NextRequest) {
+  const requestBody = request.json();
+
+  return NextResponse.json({
+    presignedUrl: "https://news.walkerplus.com/article/1023800/10210444_615.jpg",
+  });
+}
+
+```
+
+次に先ほど作成したAPIをたたくカスタムhooksを新規作成します。
+
+`frontend/app/components/container/TweetCard/tweetCard.hooks.ts`
+
+```typescript
+import { tweetData } from "@/app/type/types";
+import { apiClient } from "@/app/utils/baseApi";
+import { useEffect, useState } from "react";
+
+export const useFetchTweetImage = (tweet: tweetData) => {
+  const [imageUrl, setImageUrl] = useState<string>("");
+
+  useEffect(() => {
+    if (tweet.tweetContent.imgName === "") return;
+    const fetchImage = async () => {
+      const res = await apiClient(
+        "/api/download_url",
+        "POST",
+        "force-cache", // キャッシュを利用して値を返す
+        JSON.stringify({
+          userId: tweet.userId,
+          tweetId: tweet.id,
+        })
+      );
+
+      setImageUrl(res.presignedUrl);
+    };
+    fetchImage();
+  }, []);
+
+  return { imageUrl };
+};
+
+```
+
+最後に作成したカスタムフックをTweetCardコンポーネントから呼び出してみましょう。
+
+`frontend/app/components/container/TweetCard/tweetCard.tsx`
+
+カスタムフックの呼び出しを新規追加するのと、CardMediaで表示する画像をカスタムフックから取得したURLに基づいて表示するように更新しました。
+
+```tsx
+// ・・・略
+
+// 追加
+import { useFetchTweetImage } from "./tweetCard.hooks";
+import { Skeleton } from "@mui/material";
+
+export const TweetCard = (props: Props) => {
+  // ・・・略
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  // 追加
+  const { imageUrl } = useFetchTweetImage(props.tweet);
+  return (
+      // ・・・略
+      </CardContent>
+      // CardMedia記載箇所を以下に更新。ここから
+      {imageUrl ? (
+        <CardMedia
+          component="img"
+          height="200"
+          image={imageUrl}
+          alt="image"
+          style={{ objectFit: "contain" }}
+        />
+      ) : (
+        <Skeleton variant="rectangular" height={200} />
+      )}
+      // ここまで
+      <CardActions sx={{ mr: 3, ml: 3 }}>
+  )
+};
+
+```
+
+ここまで更新できたら、HOME画面を表示してリロードしてみましょう。
+
+![alt text](image-3.png)
+
+上記のようにモックAPIから取得したURLに基づいて、画像が表示されていればOKです。
+
+
+## さいごに
 ここまで実装完了できた受講者様のみなさん、大変お疲れ様でした！これでフロント側の実装は一旦完了です。
 ボーナスレクチャーでログイン機能など、別途フロント開発の課題はありますが、次の 4 章からはバックエンドで API を作成する段階に入っていきたいと思います。
