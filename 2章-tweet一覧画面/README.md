@@ -59,8 +59,6 @@ next.js の初期画面が確認できたら今回作成するアプリに必要
 $ npm install @mui/material @emotion/react @emotion/styled
 $ npm install @fontsource/roboto
 $ npm install @mui/icons-material
-# Recoilのインストール
-$ npm install recoil
 # reset css
 $ npm i the-new-css-reset
 ```
@@ -88,7 +86,7 @@ layout.tsx は「src/app 配下の page.tsx を自動的にラップする」が
 - リセット CSS
 - アプリケーション全体で Recoil（グローバルステートの管理）を利用するために RecoilRoot で`children`をラッピングする。(children は page.tsx の内容が入ってくる)
 
-```jsx
+```tsx
 // recoilはクライアントコンポーネントでしか使えないためuse clientを記載
 "use client";
 // MUIのフォント設定まわり
@@ -106,7 +104,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode,
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -128,7 +126,7 @@ export default function RootLayout({
 この画面では tweet 一覧画面へ遷移するための簡易ログイン画面とします。（実際のログイン機能はボーナスレクチャーにて実装します）
 `<Link href="/home"`という記載がありますが、こちらはボタンを押下したときに遷移するページのパスとなります。
 
-```jsx
+```tsx
 import { Grid } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "next/link";
@@ -176,7 +174,7 @@ next.js の v13 から App Router という仕組みができました。これ�
 
 `frontend/src/app/home/page.tsx`
 
-```jsx
+```tsx
 const Home = async () => {
   return (
     <div>
@@ -209,7 +207,7 @@ MUI の公式ドキュメントからたくさんのサンプルが見られる�
 
 https://mui.com/material-ui/all-components/
 
-```jsx
+```tsx
 "use client";
 
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -268,7 +266,7 @@ export const Header = () => {
 ヘッダーが作成できたので、`frontend/src/app/home/page.tsx`から読み込んでみましょう。
 `frontend/src/app/home/page.tsx`
 
-```jsx
+```tsx
 import { Grid } from "@mui/material";
 // 作成したHeaderコンポーネントの読み込み
 import { Header } from "../components/elements/header/header";
@@ -305,7 +303,7 @@ export default Home;
 フッターは特にロジックもないので画面側の実装をメインに行います。
 フッターコンポーネントで重要なことは`StyledFab`ボタン（プラスボタン）を押下したときに`<Link href="/tweet"`でツイート作成画面へ遷移できるようにしているところぐらいですかね。ツイート作成画面は`3章`で作成します。
 
-```jsx
+```tsx
 "use client";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -377,7 +375,7 @@ export const Footer = () => {
 フッターが作成できたので、`frontend/src/app/home/page.tsx`から読み込んでみましょう。
 `frontend/src/app/home/page.tsx`
 
-```jsx
+```tsx
 import { Grid } from "@mui/material";
 // 作成したFooterコンポーネントの読み込み
 import { Footer } from "../components/elements/footer/footer";
@@ -474,7 +472,7 @@ export type userAction = {
 以下の場合は local 環境ではない場合は本番環境の api を呼び出し、local の場合は localhost の api を呼び出すといった処理になっています。
 
 ```typescript
-const env = process.env.NEXT_PUBLIC__ENV;
+const env = process.env.NEXT_PUBLIC_ENV;
 
 export const ApiUrl = {
   BASE_API_URL:
@@ -493,7 +491,7 @@ export const ApiUrl = {
 まだ環境変数を設定していなかったと思うので、`frontend/`配下に`.env.local`ファイルを作成して以下のように環境変数を設定してあげてください。
 
 ```
-NEXT_PUBLIC__ENV=local
+NEXT_PUBLIC_ENV=local
 # バックエンドのAPIを作成した後に設定する
 NEXT_PUBLIC_BASE_API_URL=https://hogehoge/api
 ```
@@ -552,8 +550,8 @@ import { tweetData, tweetsData } from "../type/types";
 import { apiClient } from "../utils/baseApi";
 
 export const useFetchTweetsData = (userIds: string[]) => {
-  const fetchTweetsData: tweetsData = async (): Promise<tweetData[]> => {
-    const tweetsData = await apiClient(
+  const fetchTweetsData = async (): Promise<tweetData[]> => {
+    const tweetsData: tweetsData = await apiClient(
       "/api/fetch_tweet",
       "POST",
       "no-store",
@@ -650,7 +648,7 @@ export function POST() {
 `frontend/src/app/home/page.tsx`から先ほど作成したカスタムフックを呼んでみましょう。
 `frontend/src/app/home/page.tsx`
 
-```jsx
+```tsx
 import { Grid } from "@mui/material";
 import { Footer } from "../components/elements/footer/footer";
 import { Header } from "../components/elements/header/header";
@@ -697,7 +695,7 @@ export default Home;
 
 先ほどまでの実装で api からデータを受け取ることができたので、tweet を表示できるようにしていきましょう！
 
-`frontend/src/app/components`配下に`container`フォルダを追加し、`TweetCard`フォルダを作成し`/TweetCard.tsx`ファイルを新規作成します。ちなみにこの時点で`components`配下に`elements`と`container`フォルダが存在するようになったと思いますがそれぞれのフォルダには以下のような役割があります。
+`frontend/src/app/components`配下に`container`フォルダを追加し、`tweetCard`フォルダを作成し`/tweetCard.tsx`ファイルを新規作成します。ちなみにこの時点で`components`配下に`elements`と`container`フォルダが存在するようになったと思いますがそれぞれのフォルダには以下のような役割があります。
 
 - elements
   - Props の値をうけとって単純に表示するだけのような最小単位のコンポーネントを格納するフォルダ
@@ -706,7 +704,7 @@ export default Home;
 
 その他、複数の containe を含むコンポーネントを格納するための features フォルダというのもプロジェクトによっては存在しますが、今回のアプリではこちらは含みません。
 
-`frontend/src/app/container/TweetCard/TweetCard.tsx`
+`frontend/src/app/container/tweetCard/tweetCard.tsx`
 
 以下のファイルでは、これまでに出ていなかった仕組みが出てくるので説明します。
 
@@ -719,7 +717,7 @@ export default Home;
 - Props
   - Props（プロパティ）は、親コンポーネントから子コンポーネントにデータを渡すためのメカニズムであり、コンポーネント間の情報の受け渡しを可能にします。
 
-```jsx
+```tsx
 "use client";
 
 import { tweetData } from "@/app/type/types";
@@ -740,12 +738,12 @@ import { StyledMenu } from "../../elements/styledMenu/styledMenu";
 
 type Props = {
   // 親コンポーネントから受け取ったツイートデータ
-  tweet: tweetData,
+  tweet: tweetData;
 };
 
 export const TweetCard = (props: Props) => {
   // useStateの1つ目が状態を表すステートで2つ目が状態を更新する関数
-  const [anchorEl, setAnchorEl] = (useState < null) | (HTMLElement > null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -818,9 +816,9 @@ export const TweetCard = (props: Props) => {
 };
 ```
 
-StyledMenu コンポーネントがまだ準備できていなかったので`frontend/src/app/components`配下に`styledMenu/styledMenu.tsx`を追加します。
+StyledMenu コンポーネントがまだ準備できていなかったので`frontend/src/app/components/elements/`配下に`styledMenu/styledMenu.tsx`を追加します。
 
-```jsx
+```tsx
 import Menu, { MenuProps } from "@mui/material/Menu";
 import { alpha, styled } from "@mui/material/styles";
 
@@ -875,7 +873,7 @@ export const StyledMenu = styled((props: MenuProps) => (
 
 aip から取得した tweetsData が 1 件以上ある場合のみ、`TweetCardコンポーネント`を読み込むようにしています。また、`tweetsData.map`の箇所で取得した tweet の配列数分だけ`TweetCardコンポーネント`を繰り返し表示するようにしています。この JSX の中で map を使うのは現場で頻出なので使い慣れておくよ良いでしょう！
 
-```jsx
+```tsx
 import { Grid } from "@mui/material";
 import { Footer } from "../components/elements/footer/footer";
 import { Header } from "../components/elements/header/header";
