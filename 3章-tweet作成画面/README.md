@@ -686,9 +686,10 @@ export default _CreateTweet;
 開発者ツールの Network で`upload_url`と`create_tweet`の status が 200 になっていて、`/home`のツイート一覧画面に遷移できていたら OK です。
 
 ## アップロードした画像を表示できるようにする。
-上記でtweet作成時に画像のアップロード用URLを取得してアップロードするところまで実装しました。このアップロードした画像をHOME画面で表示できるようにするための実装を追加して、3章は終わりにしたいと思います。
 
-まずは、apiフォルダの配下に以下を追加します。
+上記で tweet 作成時に画像のアップロード用 URL を取得してアップロードするところまで実装しました。このアップロードした画像を HOME 画面で表示できるようにするための実装を追加して、3 章は終わりにしたいと思います。
+
+まずは、api フォルダの配下に以下を追加します。
 
 `frontend/src/app/api/download_url/route.ts`
 
@@ -699,15 +700,15 @@ export function POST(request: NextRequest) {
   const requestBody = request.json();
 
   return NextResponse.json({
-    presignedUrl: "https://news.walkerplus.com/article/1023800/10210444_615.jpg",
+    presignedUrl:
+      "https://news.walkerplus.com/article/1023800/10210444_615.jpg",
   });
 }
-
 ```
 
-次に先ほど作成したAPIをたたくカスタムhooksを新規作成します。
+次に先ほど作成した API をたたくカスタム hooks を新規作成します。
 
-`frontend/app/components/container/TweetCard/tweetCard.hooks.ts`
+`frontend/app/components/container/tweetCard/tweetCard.hooks.ts`
 
 ```typescript
 import { tweetData } from "@/app/type/types";
@@ -737,14 +738,13 @@ export const useFetchTweetImage = (tweet: tweetData) => {
 
   return { imageUrl };
 };
-
 ```
 
-最後に作成したカスタムフックをTweetCardコンポーネントから呼び出してみましょう。
+最後に作成したカスタムフックを TweetCard コンポーネントから呼び出してみましょう。
 
-`frontend/app/components/container/TweetCard/tweetCard.tsx`
+`frontend/app/components/container/tweetCard/tweetCard.tsx`
 
-カスタムフックの呼び出しを新規追加するのと、CardMediaで表示する画像をカスタムフックから取得したURLに基づいて表示するように更新しました。
+カスタムフックの呼び出しを新規追加するのと、CardMedia で表示する画像をカスタムフックから取得した URL に基づいて表示するように更新しました。
 
 ```tsx
 // ・・・略
@@ -782,13 +782,13 @@ export const TweetCard = (props: Props) => {
 
 ```
 
-ここまで更新できたら、HOME画面を表示してリロードしてみましょう。
+ここまで更新できたら、HOME 画面を表示してリロードしてみましょう。
 
 ![alt text](image-3.png)
 
-上記のようにモックAPIから取得したURLに基づいて、画像が表示されていればOKです。
-
+上記のようにモック API から取得した URL に基づいて、画像が表示されていれば OK です。
 
 ## さいごに
+
 ここまで実装完了できた受講者様のみなさん、大変お疲れ様でした！これでフロント側の実装は一旦完了です。
 ボーナスレクチャーでログイン機能など、別途フロント開発の課題はありますが、次の 4 章からはバックエンドで API を作成する段階に入っていきたいと思います。
