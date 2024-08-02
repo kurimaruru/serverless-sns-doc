@@ -29,10 +29,41 @@
    - 上記は AWS 公式のハンズオンに沿ってまとめられているので分かりやすいと思います。
      - 「操作履歴とリソース変更履歴の記録」と「脅威検知」は料金面から設定しなくても良いとは個人的に思います。筆者の個人アカウントは「ID アクセス権管理」と「請求データの確認とアラート」の章で解説されているものぐらいしか設定しておりません。
 3. AWS SSO の設定
-   - https://qiita.com/sakai00kou/items/086a12caa69a78c18f61
-     - sso を設定しておくと今後ターミナル上などからログインしやすくなります。
+   2 番の参考記事で IAM ユーザーが作成できたら以下の手順に沿って、SSO できるようにしていきます。
 
-お知らせ：
+- aws cli のインストール（お使いの OS に合わせてインストールしてください。）
+
+  - https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html
+    インストール完了したら以下のコマンドを実行し、バージョンが表示されれば OK です。
+
+  ```bash
+  $ aws --version
+  aws-cli/2.17.21 Python/3.11.9 Linux/5.15.153.1-microsoft-standard-WSL2 exe/x86_64.ubuntu.22
+  ```
+
+- アクセスキーやシークレットキーを取得して SSO するための準備を行う
+
+  - IAM からユーザーを選択する
+    ![alt text](image-6.png)
+
+  - ユーザーの選択（私の場合 Admin）
+    ![alt text](image-7.png)
+  - 画面右側の「アクセスキーを作成を選択」
+    ![alt text](image-8.png)
+  - ユースケースは CLI を選択し、「次へ」を押下(上記のレコメンデーションを理解し、アクセスキーを作成します。が表示されたらチェックを入れる)
+    ![alt text](image-9.png)
+  - 説明タグを設定は「Test」など適当に設定し、「アクセスキーを作成」ボタンを押下する
+  - アクセスキーとシークレットキーが表示されるので、情報をローカル PC などに保存しておくか.csv ファイルをダウンロードしておく。(不正アクセス防止のため、絶対に外部へ漏洩しないようにすること！！！ベストプラクティスに記載されている事項は厳守すること)
+    ![alt text](image-11.png)
+
+- アクセスキーやシークレットキーを取得できたので、次は aws cli に認証情報を登録していく。
+
+  - 以下コマンドを実行すると対話形式で設定に進める
+    ![alt text](image-12.png)
+
+- これでコマンドラインから AWS へアクセス可能となった。
+
+### お知らせ：
 
 AWS アカウントは作成してから１年間は無料で利用できます。（ただし無料枠を超えないこと）
 また、今回作成する教材のアプリケーションはサーバーレスアーキテクチャを採用しているため１カ月当たりの料金は１＄を超えることもそんなにないと思われます。（DB や画像のストレージなどに置いているデータの量だけ若干料金がかかるイメージ）
@@ -173,29 +204,9 @@ Commands you can use next
 # --------------
 ```
 
-2. AWS に SSO する
+2. 1 でビルドしたプロジェクトを実行
 
-- sso の画面に遷移す
-  ![Alt text](image-2.png)
-- 任意の`Access keysをクリックする`
-  ![Alt text](image-3.png)
-- option1: Set AWS environment variables の Copy をクリック
-  ![Alt text](image-4.png)
-- Copy したらコマンド実行箇所（ターミナルや wsl など）に貼り付けてそのまま実行します。
-  ![Alt text](image-5.png)
-
-3. 1 でビルドしたプロジェクトを実行
-   実行する前に２番の SSO を実行していないと、ここでプロジェクトを実行することはできません。以下が SSO せずに実行し、エラーになった例です。
-
-```baxh
-An unexpected error was encountered while executing "sam local invoke".
-Search for an existing issue:
-https://github.com/aws/aws-sam-cli/issues?q=is%3Aissue+is%3Aopen+Bug%3A%20sam%20local%20invoke%20-%20UnauthorizedSSOTokenError
-Or create a bug report:
-https://github.com/aws/aws-sam-cli/issues/new?template=Bug_report.md&title=Bug%3A%20sam%20local%20invoke%20-%20UnauthorizedSSOTokenError
-```
-
-さきほど正常にログインできていれば以下のコマンドを実行してもエラーにはなりません。
+さきほど設定した aws cli の設定ができていれば以下のコマンドを実行してもエラーにはなりません。
 
 ```bash
 $ sam local invoke HelloWorldFunction --event events/event.json
