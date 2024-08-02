@@ -805,7 +805,8 @@ export const TweetCard = (props: Props) => {
         <IconButton aria-label="add to favorites">
           <Favorite
             style={{
-              color: props.tweet.tweetUserAction.good !== "0" ? "red" : "gray",
+              color:
+                Number(props.tweet.tweetUserAction.good) !== 0 ? "red" : "gray",
             }}
           />
         </IconButton>
