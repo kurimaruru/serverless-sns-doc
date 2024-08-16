@@ -194,6 +194,18 @@ def create_tweet_handler(payload: dict):
 
 ```
 
+そして、作成した`create_tweet.py`を Dockerfile の COPY で追加します。
+
+```Dockerfile
+#####省略######
+COPY ./db/table.py ${LAMBDA_TASK_ROOT}/db/table.py
+COPY ./db/utils.py ${LAMBDA_TASK_ROOT}/db/utils.py
+######ここに追加#######
+COPY tweet/create_tweet_handler.py ${LAMBDA_TASK_ROOT}/create_tweet.py
+#####省略######
+
+```
+
 ## 動作検証
 
 ここまで実装できたら、動作確認してみましょう。
